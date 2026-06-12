@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String       @id @default(cuid())
+  email     String       @unique
+  name      String?
+  password  String
+  roleId    String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  apiKeys   ApiKey[]
+  logs      RequestLog[]
+  role      Role         @relation(fields: [roleId], references: [id])
+
+  @@map("users")
+}
+
+model Role {
+  id    String @id @default(cuid())
+  name  String @unique
+  users User[]
+
+  @@map("roles")
+}
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  userId    String
+  hash      String    @unique
+  revoked   Boolean   @default(false)
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@map("api_keys")
+}
+
+model RequestLog {
+  id         String   @id @default(cuid())
+  userId     String
+  method     String
+  route      String
+  statusCode Int
+  latencyMs  Int
+  timestamp  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@map("request_logs")
+}
