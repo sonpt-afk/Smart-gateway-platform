@@ -1,46 +1,45 @@
-import { UserRepository } from '../repositories/user.repository.js';
+import { userRepository }   from '../repositories/user.repository.js';
     import { hashPassword } from '../utils/hash.js';
     import { generateToken } from '../utils/jwt.js';
 import { createAppError } from '../middleware/error.middleware.js';
-    export class AuthService {
-      private userRepository: UserRepository;
+import { comparePassword } from '../utils/hash.js';
+    import { RegisterInput,
+         LoginInput }       from '../validators/auth.validator.js';
+         
+export async function register(input: RegisterInput) {
+  const existing = await userRepository.findByEmail(input.email);
+  if (existing) {
+    throw createAppError('User with this email already exists', 409);
+  }
 
-      constructor() {
-        this.userRepository = new UserRepository();
-      }
+  const passwordHash = await hashPassword(input.password);
+  const defaultRole  = await userRepository.findOrCreateRole('Developer');
+  const user         = await userRepository.createUser({
+    email:        input.email,
+    passwordHash,
+    name:         input.name,
+    roleId:       defaultRole.id,
+  });
 
-      async register(email: string, password: string, name?: string) {
-        // 1. Check if user already exists
-        const existingUser = await this.userRepository.findByEmail(email);
-        if (existingUser) {
-            throw createAppError('User with this email already exists', 400);
-            }
+  const token = generateToken({ userId: user.id, role: user.role.name });
 
-        // 2. Hash password
-        const passwordHash = await hashPassword(password);
+  const { password: _pw, ...safeUser } = user;
+  return { user: safeUser, token };
+}
 
-        // 3. Find or create default role
-        const defaultRole = await this.userRepository.findOrCreateRole('Developer');
+export async function login(input: LoginInput) {
+  const user = await userRepository.findByEmail(input.email);
+  if (!user) {
+    throw createAppError('Invalid email or password', 401);
+  }
 
-        // 4. Create user record
-        const user = await this.userRepository.createUser({
-          email,
-          passwordHash,
-          name,
-          roleId: defaultRole.id
-        });
+  const isMatch = await comparePassword(input.password, user.password);
+  if (!isMatch) {
+    throw createAppError('Invalid email or password', 401);
+  }
 
-        // 5. Generate JWT Token
-        const token = generateToken({
-          userId: user.id,
-          role: user.role.name
-        });
+  const token = generateToken({ userId: user.id, role: user.role.name });
 
-        // 6. Return response payload (omitting the password)
-        const { password: _, ...userWithoutPassword } = user;
-        return {
-          user: userWithoutPassword,
-          token
-        };
-      }
-    }
+  const { password: _pw, ...safeUser } = user;
+  return { user: safeUser, token };
+}

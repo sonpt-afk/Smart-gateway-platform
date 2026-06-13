@@ -16,5 +16,6 @@ detailed-docs-spec/*
 detailed-docs-spec/
 FOR-CARTER.md
 CLAUDE.md
+AGENTS.md
 node_modules/
 /node_modules
