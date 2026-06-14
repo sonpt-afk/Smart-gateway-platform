@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
-    import authRoutes from '../routes/auth.routes.js';
+    import {authRoutes} from '../routes/auth.routes.js';
+    import {userRoutes} from '../routes/user.routes.js';
     import { errorHandler } from '../middleware/error.middleware.js';
 
     const app = express();
@@ -17,6 +18,7 @@ import express from 'express';
 
     // Mount Routers
     app.use('/auth', authRoutes);
+    app.use('/user', userRoutes);
 
     // Error Handler Middleware (MUST be registered last)
     app.use(errorHandler);

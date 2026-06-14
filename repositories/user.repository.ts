@@ -32,4 +32,25 @@ export const userRepository = {
       include: { role: true },
     });
   },
+
+   async findById(id: string) {
+      return prisma.user.findUnique({
+        where: { id },
+        include: { role: true }
+      });
+    },
+  
+   async findRoleByName(name: string) {
+      return prisma.role.findUnique({
+        where: { name }
+      });
+    },
+
+    async updateUser(id: string, data: { roleId: string }) {
+      return prisma.user.update({
+        where: { id },
+        data,
+        include: { role: true }
+      });
+    }
 };

@@ -191,7 +191,7 @@ POST /auth/login
 ```
 
 Returns JWT token.
-
+OK
 ---
 
 ### Milestone 7
@@ -203,7 +203,7 @@ GET /me
 ```
 
 Requires valid JWT.
-
+ok
 ---
 
 ### Milestone 8
@@ -211,7 +211,7 @@ Requires valid JWT.
 Password hashing works
 
 Passwords are never stored in plain text.
-
+OK
 ---
 
 ## Phase 2 — Authorization
@@ -227,7 +227,7 @@ Admin
 Developer
 Viewer
 ```
-
+OK
 ---
 
 ### Milestone 10
@@ -235,7 +235,7 @@ Viewer
 Role assignment works
 
 Users can be assigned roles.
-
+OK
 ---
 
 ### Milestone 11
