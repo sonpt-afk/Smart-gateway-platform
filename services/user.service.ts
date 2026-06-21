@@ -23,3 +23,15 @@
       const { password: _, ...userWithoutPassword } = updatedUser;
       return userWithoutPassword;
     }
+
+    export async function deleteUser(userId: string) {
+      // 1. Verify user exists
+      const user = await userRepository.findById(userId);
+      if (!user) {
+        throw createAppError('User not found', 404);
+      }
+
+      // 2. Perform the deletion
+      await userRepository.deleteUser(userId);
+      return { message: 'User deleted successfully' };
+    }

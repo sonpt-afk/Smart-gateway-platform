@@ -52,5 +52,11 @@ export const userRepository = {
         data,
         include: { role: true }
       });
+    },
+
+    async deleteUser(id: string) {
+      return prisma.user.delete({
+        where: { id },
+      });
     }
 };

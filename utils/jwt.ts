@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
+import {RoleName} from '../middleware/auth.middleware'
 
     const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key';
 
     export interface TokenPayload {
       userId: string;
-      role: string;
+      role: RoleName;
     }
 
     export function generateToken(payload: TokenPayload): string {

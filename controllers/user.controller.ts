@@ -17,3 +17,19 @@ import * as userService from '../services/user.service.js';
         next(error);
       }
     }
+
+     export async function deleteUserController(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+      try {
+        const targetUserId = req.params.id;
+
+        // Call service to perform validation and deletion
+        await userService.deleteUser(targetUserId);
+
+        res.status(200).json({
+          success: true,
+          message: 'User deleted successfully'
+        });
+      } catch (error) {
+        next(error);
+      }
+    }
